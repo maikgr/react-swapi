@@ -11,10 +11,10 @@ class Swapi {
       .then((result) => {
         this.peopleRepo.push({
           requestUrl,
-          data: result.data.results
+          data: result.data
         });
         
-        return result.data.results;
+        return result.data;
       })
   }
 
@@ -26,10 +26,10 @@ class Swapi {
       .then((result) => {
         this.personRepo.push({
           requestUrl,
-          data: result.data.results
+          data: result.data
         });
 
-        return result.data.results;
+        return result.data;
       })
   }
 
@@ -41,10 +41,10 @@ class Swapi {
       .then((result) => {
         this.speciesRepo.push({
           requestUrl,
-          data: result.data.results
+          data: result.data
         })
 
-        return result.data.results;
+        return result.data;
       })
   }
 }

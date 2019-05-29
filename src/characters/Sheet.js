@@ -8,11 +8,6 @@ function Character(props) {
     <div className="card card-pointer" onClick={props.onClick}>
       <div className="card-content">
         <div className="media">
-          <div className="media-left">
-            <figure className="image is-48x48">
-              <img src="https://bulma.io/images/placeholders/96x96.png" alt="Placeholder" />
-            </figure>
-          </div>
           <div className="media-content">
             <p className="title is-4">{props.char.name}</p>
             <p className="subtitle is-6">{props.char.gender} Pau'an</p>
@@ -30,33 +25,29 @@ class Sheet extends React.Component {
       showDetails: false,
       characters: [],
       currentPage: 1,
-      hasNext: true,
+      hasNext: false,
       isLoading: false
     }
-    this.getPeople();
   }
 
+  componentDidMount() {
+    this.getPeople();
+  }
+  
   getPeople() {
-    if (this.state.hasNext) {
-      this.setState({
-        isLoading: true
-      });
+    this.setState({
+      isLoading: true
+    });
 
-      Swapi.getPeople(this.state.currentPage)
-        .then((people) => {
-          this.setState({
-            characters: this.state.characters.concat(people),
-            currentPage: this.state.currentPage + 1,
-            isLoading: false
-          })
+    Swapi.getPeople(this.state.currentPage)
+      .then((data) => {
+        this.setState({
+          characters: this.state.characters.concat(data.results),
+          currentPage: this.state.currentPage + 1,
+          hasNext: data.next !== null,
+          isLoading: false
         })
-        .catch(() => {
-          this.setState({
-            hasNext: false,
-            isLoading: false
-          });
-        })
-    }
+      })
   }
 
   showDetails() {
@@ -99,7 +90,6 @@ class Sheet extends React.Component {
         </button>
       )
     }
-    return (<span className="button is-static">There's no more characters</span>)
   }
 
   render() {
