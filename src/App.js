@@ -1,6 +1,5 @@
 import React from 'react';
 import Sheet from './characters/Sheet';
-import './App.css';
 
 function App() {
   return (
