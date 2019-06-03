@@ -3,19 +3,41 @@ import Details from './Details';
 import Swapi from '../services/swapi';
 import './Sheet.css';
 
-function Character(props) {
-  return (
-    <div className="card card-pointer" onClick={props.onClick}>
-      <div className="card-content">
-        <div className="media">
-          <div className="media-content">
-            <p className="title is-4">{props.char.name}</p>
-            <p className="subtitle is-6">{props.char.gender} Pau'an</p>
+class Character extends React.Component {
+  constructor(props) {
+    super(props);
+    const nogender = ['n/a', 'none'];
+    let gender = nogender.includes(this.props.char.gender.toLowerCase()) ? '' : this.props.char.gender;
+    gender = gender.charAt(0).toUpperCase() + gender.slice(1);
+    this.state = {
+      gender,
+      species: ''
+    }
+  }
+
+  componentDidMount() {
+    Swapi.getSpecies(this.props.char.species)
+      .then((result) => {
+        this.setState({
+          species: result.name
+        })
+      })
+  }
+
+  render() {
+    return (
+      <div className="card card-pointer" onClick={this.props.onClick}>
+        <div className="card-content">
+          <div className="media">
+            <div className="media-content">
+              <p className="title is-4">{this.props.char.name}</p>
+              <p className="subtitle is-6">{this.state.gender} {this.state.species}</p>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  )
+    )
+  }
 }
 
 class Sheet extends React.Component {
@@ -26,14 +48,15 @@ class Sheet extends React.Component {
       characters: [],
       currentPage: 1,
       hasNext: false,
-      isLoading: false
+      isLoading: false,
+      selected: null
     }
   }
 
   componentDidMount() {
     this.getPeople();
   }
-  
+
   getPeople() {
     this.setState({
       isLoading: true
@@ -50,24 +73,18 @@ class Sheet extends React.Component {
       })
   }
 
-  showDetails() {
+  showDetails(char) {
     this.setState({
-      showDetails: true
+      showDetails: true,
+      selected: char
     })
   }
 
   hideDetails() {
     this.setState({
-      showDetails: false
+      showDetails: false,
+      selected: null
     })
-  }
-
-  renderCharacter(char) {
-    return (
-      <div key={char.name} className="column is-3">
-        <Character onClick={() => this.showDetails()} char={char} />
-      </div>
-    )
   }
 
   characterComponents() {
@@ -77,6 +94,12 @@ class Sheet extends React.Component {
     }
 
     return components;
+  }
+
+  renderDetails() {
+    if (this.state.selected) {
+      return (<Details onClick={() => this.hideDetails()} isActive={this.state.showDetails} char={this.state.selected} />)
+    }
   }
 
   renderLoadButton() {
@@ -90,6 +113,14 @@ class Sheet extends React.Component {
         </button>
       )
     }
+  }
+
+  renderCharacter(char) {
+    return (
+      <div key={char.name} className="column is-3">
+        <Character onClick={() => this.showDetails(char)} char={char} />
+      </div>
+    )
   }
 
   render() {
@@ -108,7 +139,7 @@ class Sheet extends React.Component {
             </div>
           </div>
         </div>
-        <Details onClick={() => this.hideDetails()} isActive={this.state.showDetails} />
+        {this.renderDetails()}
       </div>
     )
   }

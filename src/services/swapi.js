@@ -5,7 +5,7 @@ class Swapi {
     if (!page) page = 1;
     const requestUrl = `${this.url}/people/?page=${page}`;
     const people = this.peopleRepo.find(p => p.requestUrl === requestUrl);
-    if (people) return people.data;
+    if (people) return Promise.resolve(people.data);
 
     return axios.get(requestUrl)
       .then((result) => {
@@ -20,7 +20,7 @@ class Swapi {
 
   static getDetails(requestUrl) {
     const person = this.personRepo.find(p => p.requestUrl === requestUrl);
-    if (person) return person.data;
+    if (person) return Promise.resolve(person.data);
 
     return axios.get(requestUrl)
       .then((result) => {
@@ -28,14 +28,13 @@ class Swapi {
           requestUrl,
           data: result.data
         });
-
         return result.data;
       })
   }
 
   static getSpecies(requestUrl) {
     const species = this.speciesRepo.find(p => p.requestUrl === requestUrl);
-    if (species) return species.data;
+    if (species) return Promise.resolve(species.data);
 
     return axios.get(requestUrl)
       .then((result) => {
