@@ -2,7 +2,7 @@ import React from 'react';
 import Swapi from '../services/swapi';
 import './Details.css'
 
-class Details extends React.Component {
+export default class Details extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -70,5 +70,3 @@ class Details extends React.Component {
     )
   }
 }
-
-export default Details; 
